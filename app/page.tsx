@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Home() {
+function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
@@ -63,3 +63,137 @@ export default function Home() {
     </div>
   );
 }
+"use client";
+
+import { useState } from "react";
+
+type Student = {
+  id: number;
+  name: string;
+  email: string;
+  level: string;
+};
+
+export default function StudentRegistrationPage() {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [level, setLevel] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!name || !email || !level) {
+      setError("All fields are required.");
+      return;
+    }
+
+    const newStudent: Student = {
+      id: Date.now(),
+      name,
+      email,
+      level,
+    };
+
+    setStudents((prev) => [...prev, newStudent]);
+
+    // Reset form
+    setName("");
+    setEmail("");
+    setLevel("");
+    setError("");
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow">
+        <h1 className="text-2xl font-bold mb-4">
+          Software Engineering Lecture - Student Registration
+        </h1>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium">Full Name</label>
+            <input
+              type="text"
+              className="w-full border p-2 rounded mt-1"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Email</label>
+            <input
+              type="email"
+              className="w-full border p-2 rounded mt-1"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="john@example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Level</label>
+            <select
+              className="w-full border p-2 rounded mt-1"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+            >
+              <option value="">Select level</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-black text-white px-4 py-2 rounded hover:opacity-90"
+          >
+            Register Student
+          </button>
+        </form>
+
+        {/* Student List */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-3">Registered Students</h2>
+
+          {students.length === 0 ? (
+            <p className="text-gray-500">No students registered yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {students.map((student) => (
+                <li
+                  key={student.id}
+                  className="border p-3 rounded flex justify-between"
+                >
+                  <div>
+                    <p className="font-medium">{student.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {student.email}
+                    </p>
+                  </div>
+                  <span className="text-sm bg-gray-200 px-2 py-1 rounded">
+                    {student.level}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Optionally, export Home as a named export if you want to use it elsewhere
+// export { Home };
